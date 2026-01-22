@@ -1,0 +1,273 @@
+openapi: 3.0.3
+info:
+  title: Pinjol API - PT. XYZ
+  version: 1.0.0
+  description: API untuk layanan pinjaman online PT. XYZ
+
+servers:
+  - url: http://localhost:3000
+    description: Local Mock Server (Node.js)
+  - url: https://api.xyz-fintech.com/v1
+    description: Production Server
+
+paths:
+  /auth/login:
+    post:
+      summary: Login pengguna
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: "user@example.com"
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        '200':
+          description: Login berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIn0.abc123"
+                  token_type:
+                    type: string
+                    example: "Bearer"
+                  expires_in:
+                    type: integer
+                    example: 3600
+                  user_id:
+                    type: string
+                    example: "user123"
+
+  /loans/apply:
+    post:
+      summary: Mengajukan pinjaman baru
+      tags:
+        - Loans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - amount
+                - tenor
+              properties:
+                user_id:
+                  type: string
+                  example: "user123"
+                amount:
+                  type: number
+                  minimum: 500000
+                  maximum: 20000000
+                  example: 5000000
+                tenor:
+                  type: integer
+                  minimum: 1
+                  maximum: 24
+                  example: 12
+                purpose:
+                  type: string
+                  example: "Modal usaha"
+      responses:
+        '201':
+          description: Pengajuan berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loan_id:
+                    type: string
+                    example: "loan123"
+                  status:
+                    type: string
+                    enum: [pending, approved, rejected]
+                    example: "pending"
+                  message:
+                    type: string
+                    example: "Pengajuan pinjaman berhasil disubmit"
+
+  /loans/loan123:
+    get:
+      summary: Cek status pinjaman (Fixed ID untuk testing)
+      tags:
+        - Loans
+      responses:
+        '200':
+          description: Detail pinjaman
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loan_id:
+                    type: string
+                    example: "loan123"
+                  status:
+                    type: string
+                    example: "approved"
+                  amount:
+                    type: number
+                    example: 5000000
+                  remaining_balance:
+                    type: number
+                    example: 4500000
+                  next_payment_date:
+                    type: string
+                    format: date
+                    example: "2024-02-15"
+
+  /loans/loan123/payments:
+    post:
+      summary: Bayar cicilan (Fixed ID untuk testing)
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  example: 500000
+      responses:
+        '200':
+          description: Pembayaran berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payment_id:
+                    type: string
+                    example: "pay123"
+                  status:
+                    type: string
+                    example: "success"
+                  remaining_balance:
+                    type: number
+                    example: 4000000
+
+  /users/user123/credit-score:
+    get:
+      summary: Cek skor kredit pengguna (Fixed ID untuk testing)
+      tags:
+        - Credit
+      responses:
+        '200':
+          description: Skor kredit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                    example: "user123"
+                  credit_score:
+                    type: integer
+                    example: 750
+                  risk_level:
+                    type: string
+                    enum: [low, medium, high]
+                    example: "low"
+
+  /loans/loan123/schedule:
+    get:
+      summary: Jadwal pembayaran (Fixed ID untuk testing)
+      tags:
+        - Loans
+      responses:
+        '200':
+          description: Jadwal cicilan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loan_id:
+                    type: string
+                    example: "loan123"
+                  installments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        installment_number:
+                          type: integer
+                          example: 1
+                        due_date:
+                          type: string
+                          format: date
+                          example: "2024-02-15"
+                        amount:
+                          type: number
+                          example: 500000
+  /notifications/payment-reminder:
+    post:
+      summary: Kirim reminder pembayaran
+      tags:
+        - Notifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - loan_id
+              properties:
+                loan_id:
+                  type: string
+                  example: "loan123"
+                reminder_type:
+                  type: string
+                  enum: [sms, email, push]
+                  example: "email"
+      responses:
+        '200':
+          description: Reminder terkirim
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Payment reminder sent successfully"
+                  sent_at:
+                    type: string
+                    format: date-time
+                    example: "2024-01-22T10:30:00Z"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []

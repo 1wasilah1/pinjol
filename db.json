@@ -1,0 +1,46 @@
+{
+  "auth": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIn0.abc123",
+    "token_type": "Bearer",
+    "expires_in": 3600,
+    "user_id": "user123"
+  },
+  "loans": {
+    "loan_id": "loan123",
+    "status": "approved",
+    "amount": 5000000,
+    "remaining_balance": 4500000,
+    "next_payment_date": "2024-02-15"
+  },
+  "payments": {
+    "payment_id": "pay123",
+    "status": "success",
+    "remaining_balance": 4000000
+  },
+  "credit": {
+    "user_id": "user123",
+    "credit_score": 750,
+    "risk_level": "low"
+  },
+  "schedule": {
+    "loan_id": "loan123",
+    "installments": [
+      {
+        "installment_number": 1,
+        "due_date": "2024-02-15",
+        "amount": 500000,
+        "status": "pending"
+      },
+      {
+        "installment_number": 2,
+        "due_date": "2024-03-15",
+        "amount": 500000,
+        "status": "pending"
+      }
+    ]
+  },
+  "notifications": {
+    "message": "Payment reminder sent successfully",
+    "sent_at": "2024-01-22T10:30:00Z"
+  }
+}
